@@ -14,11 +14,11 @@ def test_sigmoid_crossentropy():
     sym = mx.sym.Custom(data = data, label = label, op_type = "SigmoidCrossEntropy")
 
     f = 1.0 / (1 + np.exp(-x))
-    loss = np.sum(- (y * np.log(f) + (1 - y) * np.log(1 - f) )) / batch_size
+    loss = np.mean(np.sum(- (y * np.log(f) + (1 - y) * np.log(1 - f) ), axis = 1))
     loss = np.array([loss])
     check_symbolic_forward(sym, [x, y], [loss])
 
-    dx = (f - y) / batch_size
+    dx = (f - y)
 
     check_symbolic_backward(sym, [x, y], [np.ones(x.shape)], [dx])
 

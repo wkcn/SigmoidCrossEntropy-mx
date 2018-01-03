@@ -7,10 +7,10 @@ class SigmoidCrossEntropy(mx.operator.CustomOp):
         x = in_data[0]
         y = in_data[1]
         m = mx.nd.relu(-x)
-        loss = mx.nd.sum(mx.nd.mean(x - x * y + m + mx.nd.log(mx.nd.exp(-m) + mx.nd.exp(-x - m)), axis = 0))
+        loss = mx.nd.mean(mx.nd.sum(x - x * y + m + mx.nd.log(mx.nd.exp(-m) + mx.nd.exp(-x - m)), axis = 1))
         self.assign(out_data[0], req[0], loss)
     def backward(self, req, out_grad, in_data, out_data, in_grad, aux):
-        dx = (1.0 / (1.0 + mx.nd.exp(-in_data[0])) - in_data[1]) / in_data[0].shape[0]
+        dx = mx.nd.sigmoid(in_data[0]) - in_data[1]
         self.assign(in_grad[0], req[0], dx)
         
 @mx.operator.register("SigmoidCrossEntropy")
